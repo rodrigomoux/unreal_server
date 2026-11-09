@@ -1,0 +1,23 @@
+{
+  "name": "survival-platform",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Hybrid Unreal Dedicated Server + Node.js backend for a persistent survival world",
+  "workspaces": [
+    "backend/apps/*",
+    "backend/packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build -w @survival/shared-types -w @survival/authentication -w @survival/database -w @survival/events -w @survival/infrastructure -w @survival/api",
+    "dev:api": "npm run dev -w @survival/api",
+    "start:api": "npm run start -w @survival/api",
+"test": "npm run test -w @survival/authentication -w @survival/api",
+  "typecheck": "npm run typecheck -w @survival/api",
+    "infra:up": "docker compose -f infrastructure/local/docker-compose.yml up -d",
+    "infra:down": "docker compose -f infrastructure/local/docker-compose.yml down",
+    "infra:logs": "docker compose -f infrastructure/local/docker-compose.yml logs -f"
+  },
+  "engines": {
+    "node": ">=16.20.0"
+  }
+}

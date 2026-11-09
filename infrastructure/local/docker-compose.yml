@@ -1,0 +1,53 @@
+# Local dependencies for the survival backend.
+# Snapshots use ./data/snapshots (LocalSnapshotStore). MinIO is optional (profile: s3).
+
+services:
+  mongo:
+    image: mongo:7
+    container_name: survival-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: survival
+      MONGO_INITDB_ROOT_PASSWORD: survival
+      MONGO_INITDB_DATABASE: survival
+    volumes:
+      - survival_mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: survival-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  minio:
+    profiles: ["s3"]
+    image: minio/minio:latest
+    container_name: survival-minio
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    volumes:
+      - survival_minio_data:/data
+
+volumes:
+  survival_mongo_data:
+  survival_minio_data:

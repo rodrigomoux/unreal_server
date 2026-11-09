@@ -1,0 +1,32 @@
+# Reference workflow — copy to .github/workflows/ci.yml when ready.
+# Does NOT deploy to AWS and does NOT run terraform apply.
+
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - run: npm install
+      - run: npm run build
+      - run: npm test
+
+  terraform-fmt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - name: Format check only
+        run: terraform fmt -check -recursive infrastructure/terraform
+      - name: Explicitly skip apply
+        run: echo "terraform apply is forbidden in this workflow"

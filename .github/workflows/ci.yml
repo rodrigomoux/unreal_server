@@ -1,0 +1,31 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - run: npm install
+      - run: npm run build
+      - run: npm test
+
+  terraform-guardrail:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Forbid terraform apply in CI
+        run: |
+          if grep -R "terraform apply" .github/workflows -n | grep -v "forbidden\|skip\|NÃO\|DO NOT"; then
+            echo "terraform apply must not be wired into CI yet"
+            exit 1
+          fi
+          echo "OK: no terraform apply in workflows"
