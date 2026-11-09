@@ -1,0 +1,26 @@
+### Health
+GET http://127.0.0.1:3000/health
+
+### Heartbeat (DS)
+POST http://127.0.0.1:3000/internal/heartbeat
+Content-Type: application/json
+x-internal-token: dev-change-me-internal-service-token
+
+{
+  "playerCount": 1,
+  "status": "online"
+}
+
+### Checkpoint (DS)
+POST http://127.0.0.1:3000/internal/world/checkpoint
+Content-Type: application/json
+x-internal-token: dev-change-me-internal-service-token
+
+{
+  "dirtyActorCount": 3,
+  "dataBase64": "d29ybGQtc3RhdGUtdjE="
+}
+
+### Restore latest (DS boot)
+GET http://127.0.0.1:3000/internal/world/restore-latest
+x-internal-token: dev-change-me-internal-service-token
